@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>개구리 링크 모음</title>
 
+  <!-- ✅ GA4 (측정 ID만 바꿔줘: G-XXXXXXXXXX) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
   <style>
     body { font-family: system-ui, sans-serif; background:#FCEFD9; color:#2A221A; margin:0; }
 
@@ -235,7 +244,7 @@
       padding: 0;
       margin-left: 6px;
 
-      color:#4A3A2A;  /* ✅ title 색 */
+      color:#4A3A2A;
       font-weight:700;
       font-size:14px;
       letter-spacing:-0.5px;
@@ -263,17 +272,6 @@
       opacity:1;
       transform: translateY(0);
     }
-body{
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none; /* iOS 길게누르기 메뉴 */
-}
-
-/* 클릭/복사/입력 가능한 요소는 선택 허용 */
-a, button, input, textarea{
-  -webkit-user-select: auto;
-  user-select: auto;
-}
   </style>
 </head>
 
@@ -325,73 +323,64 @@ a, button, input, textarea{
 
       <p class="subtitle">
         Business mail 💼
-        <button class="mail-copy" data-track="business" data-desc="클릭하면 복사됨" type="button" onclick="copyEmail()">yooon0506@gmail.com</button>
+        <button class="mail-copy" data-desc="클릭하면 복사됨" type="button" onclick="copyEmail()">yooon0506@gmail.com</button>
         <span class="copy-toast" id="copyToast">복사 완료 🐸</span>
       </p>
     </div>
   </div>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
- <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-QKM67F6D4D');
-  const topbar = document.getElementById('topbar');
+  <script>
+    const topbar = document.getElementById('topbar');
 
-  function updateTopbar(){
-    const y = window.scrollY || 0;
+    function updateTopbar(){
+      const y = window.scrollY || 0;
 
-    if (y > 6) topbar.classList.add('is-visible');
-    else topbar.classList.remove('is-visible');
+      if (y > 6) topbar.classList.add('is-visible');
+      else topbar.classList.remove('is-visible');
 
-    if (y > 16) topbar.classList.add('is-scrolled');
-    else topbar.classList.remove('is-scrolled');
-  }
-
-  window.addEventListener('scroll', updateTopbar, { passive: true });
-  window.addEventListener('load', updateTopbar);
-
-  // ✅ 메일 복사
-  async function copyEmail(){
-    const email = "yooon0506@gmail.com";
-    try{
-      await navigator.clipboard.writeText(email);
-    }catch(e){
-      const ta = document.createElement("textarea");
-      ta.value = email;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
+      if (y > 16) topbar.classList.add('is-scrolled');
+      else topbar.classList.remove('is-scrolled');
     }
 
-    const toast = document.getElementById("copyToast");
-    toast.classList.add("show");
-    clearTimeout(window.__toastTimer);
-    window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 1200);
-  }
+    window.addEventListener('scroll', updateTopbar, { passive: true });
+    window.addEventListener('load', updateTopbar);
 
-  // ✅ 우클릭/드래그/선택 방지
-  document.addEventListener('contextmenu', (e) => {
-    // 링크/버튼 위에서는 굳이 막고 싶지 않으면 아래 줄을 주석 처리 가능
-    e.preventDefault();
-  });
-  document.querySelectorAll('a.btn[data-track]').forEach((a) => {
-    a.addEventListener('click', () => {
-      const name = a.dataset.track || 'unknown';
-      const url = a.href;
+    // ✅ 메일 복사 + GA4 이벤트(email_copy)
+    async function copyEmail(){
+      const email = "yooon0506@gmail.com";
+      try{
+        await navigator.clipboard.writeText(email);
+      }catch(e){
+        const ta = document.createElement("textarea");
+        ta.value = email;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
 
-      // GA4 커스텀 이벤트
-      gtag('event', 'outbound_click', {
-        link_name: name,
-        link_url: url
+      // GA4: email_copy 이벤트
+      if (typeof gtag === "function") {
+        gtag('event', 'email_copy', { email: email });
+      }
+
+      const toast = document.getElementById("copyToast");
+      toast.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 1200);
+    }
+
+    // ✅ GA4: 버튼별 클릭 이벤트 (youtube_click / instagram_click / blog_click)
+    document.querySelectorAll('a.btn[data-track]').forEach((a) => {
+      a.addEventListener('click', () => {
+        const name = a.dataset.track || 'unknown';
+        const eventName = `${name}_click`;
+
+        if (typeof gtag === "function") {
+          gtag('event', eventName, { link_url: a.href });
+        }
       });
     });
-  });
-
-  document.addEventListener('dragstart', (e) => e.preventDefault());
-  document.addEventListener('selectstart', (e) => e.preventDefault());
-</script>
+  </script>
 </body>
 </html>
