@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>개구리 링크 모음</title>
 
-  <!-- ✅ GA4 (측정 ID만 바꿔줘: G-XXXXXXXXXX) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <!-- ✅ GA4 (측정 ID만 바꿔줘: G-QKM67F6D4D) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QKM67F6D4D"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
+    gtag('config', 'G-QKM67F6D4D');
   </script>
 
   <style>
@@ -244,7 +244,7 @@
       padding: 0;
       margin-left: 6px;
 
-      color:#4A3A2A;
+      color:#4A3A2A;  /* ✅ title 색 */
       font-weight:700;
       font-size:14px;
       letter-spacing:-0.5px;
@@ -271,6 +271,18 @@
     .copy-toast.show{
       opacity:1;
       transform: translateY(0);
+    }
+
+    body{
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none; /* iOS 길게누르기 메뉴 */
+    }
+
+    /* 클릭/복사/입력 가능한 요소는 선택 허용 */
+    a, button, input, textarea{
+      -webkit-user-select: auto;
+      user-select: auto;
     }
   </style>
 </head>
@@ -345,7 +357,7 @@
     window.addEventListener('scroll', updateTopbar, { passive: true });
     window.addEventListener('load', updateTopbar);
 
-    // ✅ 메일 복사 + GA4 이벤트(email_copy)
+    // ✅ 메일 복사 (+ GA4 email_copy)
     async function copyEmail(){
       const email = "yooon0506@gmail.com";
       try{
@@ -359,7 +371,7 @@
         document.body.removeChild(ta);
       }
 
-      // GA4: email_copy 이벤트
+      // GA4 이벤트
       if (typeof gtag === "function") {
         gtag('event', 'email_copy', { email: email });
       }
@@ -369,6 +381,13 @@
       clearTimeout(window.__toastTimer);
       window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 1200);
     }
+
+    // ✅ 우클릭/드래그/선택 방지
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
+    document.addEventListener('dragstart', (e) => e.preventDefault());
+    document.addEventListener('selectstart', (e) => e.preventDefault());
 
     // ✅ GA4: 버튼별 클릭 이벤트 (youtube_click / instagram_click / blog_click)
     document.querySelectorAll('a.btn[data-track]').forEach((a) => {
