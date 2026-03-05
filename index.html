@@ -299,19 +299,19 @@ a, button, input, textarea{
 
       <h1 class="title">뜨괴구리 링크모음</h1>
 
-      <a class="btn" data-desc="뜨괴구리 유튜브 채널로 이동"
+      <a class="btn" data-track="youtube" data-desc="뜨괴구리 유튜브 채널로 이동"
          href="https://www.youtube.com/channel/UC_Ra0YgNJ9lzAkodyk8MuGQ" target="_blank" rel="noopener">
         <img src="assets/youtube.png" alt="YouTube" />
         Youtube
       </a>
 
-      <a class="btn" data-desc="인스타그램 구경하기"
+      <a class="btn" data-track="instagram" data-desc="인스타그램 구경하기"
          href="https://www.instagram.com/bloomknitdiary/" target="_blank" rel="noopener">
         <img src="assets/instagram.png" alt="Instagram" />
         Instagram
       </a>
 
-      <a class="btn" data-desc="네이버 블로그로 이동"
+      <a class="btn" data-track="blog" data-desc="네이버 블로그로 이동"
          href="https://blog.naver.com/yooon0506" target="_blank" rel="noopener">
         <img src="assets/blog.png" alt="Blog" />
         Blog
@@ -325,13 +325,18 @@ a, button, input, textarea{
 
       <p class="subtitle">
         Business mail 💼
-        <button class="mail-copy" data-desc="클릭하면 복사됨" type="button" onclick="copyEmail()">yooon0506@gmail.com</button>
+        <button class="mail-copy" data-track="business" data-desc="클릭하면 복사됨" type="button" onclick="copyEmail()">yooon0506@gmail.com</button>
         <span class="copy-toast" id="copyToast">복사 완료 🐸</span>
       </p>
     </div>
   </div>
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QKM67F6D4D');
   const topbar = document.getElementById('topbar');
 
   function updateTopbar(){
@@ -371,6 +376,18 @@ a, button, input, textarea{
   document.addEventListener('contextmenu', (e) => {
     // 링크/버튼 위에서는 굳이 막고 싶지 않으면 아래 줄을 주석 처리 가능
     e.preventDefault();
+  });
+  document.querySelectorAll('a.btn[data-track]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const name = a.dataset.track || 'unknown';
+      const url = a.href;
+
+      // GA4 커스텀 이벤트
+      gtag('event', 'outbound_click', {
+        link_name: name,
+        link_url: url
+      });
+    });
   });
 
   document.addEventListener('dragstart', (e) => e.preventDefault());
